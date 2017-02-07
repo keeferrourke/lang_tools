@@ -43,7 +43,8 @@ def grcheck(to_check, lang, ltool, console):
             print
             print "Context:", matches[i].context
             print
-    # Match type is not JSON serializeable, so we must build the JSON ourselves
+    # LanguageTool.check.Match type is not JSON serializeable
+    # build a JSON string from the array of Match objects
     else:
         json_string += '{\n'
         json_string += '"lang": ' + '"' + lang + '",\n'
@@ -72,7 +73,7 @@ def grcheck(to_check, lang, ltool, console):
 
         return json_string
 
-# main program
+# main program that takes arguments
 def main(argv):
     supported_langs = language_check.get_languages()
 
@@ -129,6 +130,5 @@ def main(argv):
 
     f_in.close()
 
-# call the main program
 if __name__ == '__main__':
     main(sys.argv[1:])

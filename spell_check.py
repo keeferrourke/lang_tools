@@ -45,7 +45,7 @@ def spcheck(to_check, lang, hun, console):
                 misspelled.append(suggestion)
             else:
                 correct.append((line_num, word_num, word))
-    # print raw lists to the console if in console mode
+    # print data from lists to the console if in console mode
     if console == True:
         print 'lang: ', lang
         # print correctly spelled words
@@ -61,37 +61,32 @@ def spcheck(to_check, lang, hun, console):
             for j in range(len(misspelled[i][2][1])):
                 print misspelled[i][2][1][j],
             print '\n'
-    # format a JSON string and return it
-    # the following code block can probably be done more succinctly using some
-    # magical list structure and json.dumps(), but I wanted key-value pairs
-    # that were self-documenting, not some complicated list in the JSON format
+    # build a JSON string from list structures
     else:
-        indent = '    '
         json_string += '{\n'
-        json_string += indent + '"lang": ' + '"' +  lang + '",\n'
-        json_string += indent + '"correct words": {\n'
+        json_string += '"lang": ' + '"' +  lang + '",\n'
+        json_string += '"correct words": {\n'
         for i in range(len(correct)):
-            json_string += indent + indent + '"' + str(correct[i][2]) + '": {\n'
-            json_string += indent + indent + indent + '"word_num": ' + str(correct[i][1]) + ',\n'
-            json_string += indent + indent + indent + '"line_num": ' + str(correct[i][0]) + '\n'
-            json_string += indent + indent + '}'
+            json_string += '"' + str(correct[i][2]) + '": {\n'
+            json_string += '"word_num": ' + str(correct[i][1]) + ',\n'
+            json_string += '"line_num": ' + str(correct[i][0]) + '\n'
+            json_string += '}'
             if i != (len(correct) - 1):
                 json_string += ','
             json_string += '\n'
-        json_string += indent + '},\n'
-        json_string += indent + '"misspelled words": {\n'
+        json_string += '},\n'
+        json_string += '"misspelled words": {\n'
         for i in range(len(misspelled)):
-            json_string += indent + indent + '"'+ str(misspelled[i][2][0]) + '": {\n'
-            json_string += indent + indent + indent + '"word_num": ' + str(misspelled[i][1]) + ',\n'
-            json_string += indent + indent + indent + '"line_num": ' + str(misspelled[i][0]) + ',\n'
+            json_string += '"'+ str(misspelled[i][2][0]) + '": {\n'
+            json_string += '"word_num": ' + str(misspelled[i][1]) + ',\n'
+            json_string += '"line_num": ' + str(misspelled[i][0]) + ',\n'
             j_array = json.dumps(misspelled[i][2][1])
-            json_string += indent + indent + indent + '"suggestions": ' + j_array + '\n'
-            json_string += indent + indent + '}'
+            json_string += '"suggestions": ' + j_array + '\n'
+            json_string += '}'
             if i != (len(misspelled) - 1):
                 json_string +=','
             json_string += '\n'
-        json_string += indent + '}\n'
-        json_string += '}\n'
+        json_string += '}\n}\n'
 
         # make formatting prettier
         json_obj = json.loads(json_string)
@@ -99,7 +94,7 @@ def spcheck(to_check, lang, hun, console):
 
     return json_string
 
-# main program
+# main program that takes arguments
 def main(argv):
     # options
     path = '/usr/share/hunspell/' # default hunspell install path
@@ -157,6 +152,5 @@ def main(argv):
 
     f_in.close()
 
-# call the main program
 if __name__ == '__main__':
     main(sys.argv[1:])
