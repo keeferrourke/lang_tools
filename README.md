@@ -1,8 +1,8 @@
 # Language Tools
 
-This set of scripts will parse text and provide suggestions for corrections.
-The scripts may be used on the command line with verbose console output, or 
-produce JSON formatted output.
+This set of scripts will parse text and provide suggestions for spelling
+and grammatical corrections. The scripts may be used on the command line with
+verbose console output, or to produce JSON formatted output.
 
 These scripts are intended to be merged into the _Immediate Feeback System_ as
 part of the core tools.
@@ -46,7 +46,7 @@ spell_check.py -l en_US -j corrections.json -i misspellings
 ```
 
 Note that if Hunspell is not installed at the default path
-`/usr/share/hunspell`, then you may specify the path with the `--path=` option.
+`/usr/share/hunspell`, then you may specify the path with the `--path` option.
 For instance:
 ```
 spell_check.py --path=/opt/hunspell -i misspellings
@@ -79,7 +79,6 @@ For help:
 grammar.py --help
 ```
 
-
 ## Caveats
 
 ### spell\_check.py
@@ -94,8 +93,10 @@ Kind of slow?
 
 ## License Information
 
-These scripts are free software, and are licensed permissively under the ISC
-License. See the comment headers of each script for additional information.
+These scripts are
+[free software](https://www.gnu.org/philosophy/free-sw.en.html), and are
+licensed permissively under the ISC License. See the comment headers of each
+script for additional information.
 
 See also the license information attached to the libraries that were used for
 this project.
