@@ -1,0 +1,20 @@
+# test files
+*.txt
+*.json
+test*
+
+# vim
+*.swp
+*.swo
+
+# annoying files
+.DS_Store
+.DS_Store?
+.Spotlight-V100
+.Trashes
+*.db
+
+# things I really don't want
+*.old
+*.bak
+
