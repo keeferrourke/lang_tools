@@ -32,8 +32,8 @@ $ sudo -H pip install --upgrade language-check
 ### spell\_check.py
 
 Run check on a file called `misspellings` against Canadian English dictionaries
-with output to the console. If the `--lang` or short `-l` option isn't specified, then the
-default language that is used is Canadian English.
+with output to the console. If the `--lang` or short `-l` option isn't
+specified, then the default language that is used is Canadian English.
 ```
 spell_check.py --lang=en_CA -i mispellings
 ```
@@ -41,7 +41,7 @@ spell_check.py --lang=en_CA -i mispellings
 Run check on a file called `misspellings` against US English dictionaries, with
 output to `corrections.json`.
 ```
-spell_check.py --lang=en_US --json=corrections.json -i mispellings
+spell_check.py --lang=en_US --json=corrections.json --ifile=mispellings
 spell_check.py -l en_US -j corrections.json -i misspellings
 ```
 
@@ -49,9 +49,16 @@ Note that if Hunspell is not installed at the default path
 `/usr/share/hunspell`, then you may specify the path with the `--path` option.
 For instance:
 ```
-spell_check.py --path=/opt/hunspell -i misspellings
+spell_check.py --path=/opt/hunspell --ifile=misspellings
 spell_check.py -p /opt/hunspell -i misspellings
 ```
+
+By default the list of correctly spelled words is suppressed from the output,
+however this can be revealed by specifying either the `-c` or `--correct`
+option.
+```
+spell_check.py --correct --ifile=misspellings
+spell_check.py -c -i misspellings
 
 For help:
 ```

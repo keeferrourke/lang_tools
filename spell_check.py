@@ -23,9 +23,9 @@ import re
 import hunspell
 
 # spcheck(string to_check, string lang, hunspell.HunSpell hun, bool console)
-def spcheck(to_check, lang, hun, console):
+def spcheck(to_check, lang, hun, console, correct_flag):
     misspelled = [] # each element is (line_num, word_num, (word, suggest[]))
-    correct = [] # each element is (line_num, word_num, word)
+    correct_words = [] # each element is (line_num, word_num, word)
     json_string = ''
 
     line_num = 0
@@ -44,15 +44,16 @@ def spcheck(to_check, lang, hun, console):
                 suggestion = (line_num, word_num, (word, hun.suggest(word)))
                 misspelled.append(suggestion)
             else:
-                correct.append((line_num, word_num, word))
+                correct_words.append((line_num, word_num, word))
     # print data from lists to the console if in console mode
     if console == True:
         print 'lang: ', lang
         # print correctly spelled words
-        print 'correctly spelled words:'
-        for i in range(len(correct)):
-            print 'at word:', correct[i][1], 'on line:', correct[i][0], '"' + correct[i][2] + '"'
-        print '\n'
+        if correct_flag == True:
+            print 'correctly spelled words:'
+            for i in range(len(correct_words)):
+                print 'at word:', correct_words[i][1], 'on line:', correct_words[i][0], '"' + correct_words[i][2] + '"'
+            print '\n'
         # print suggestions for misspelled words
         for i in range(len(misspelled)):
             print 'misspelled word:'
@@ -65,16 +66,17 @@ def spcheck(to_check, lang, hun, console):
     else:
         json_string += '{\n'
         json_string += '"lang": ' + '"' +  lang + '",\n'
-        json_string += '"correct words": {\n'
-        for i in range(len(correct)):
-            json_string += '"' + str(correct[i][2]) + '": {\n'
-            json_string += '"word_num": ' + str(correct[i][1]) + ',\n'
-            json_string += '"line_num": ' + str(correct[i][0]) + '\n'
-            json_string += '}'
-            if i != (len(correct) - 1):
-                json_string += ','
-            json_string += '\n'
-        json_string += '},\n'
+        if correct_flag == True:
+            json_string += '"correct words": {\n'
+            for i in range(len(correct_words)):
+                json_string += '"' + str(correct_words[i][2]) + '": {\n'
+                json_string += '"word_num": ' + str(correct_words[i][1]) + ',\n'
+                json_string += '"line_num": ' + str(correct_words[i][0]) + '\n'
+                json_string += '}'
+                if i != (len(correct_words) - 1):
+                    json_string += ','
+                json_string += '\n'
+            json_string += '},\n'
         json_string += '"misspelled words": {\n'
         for i in range(len(misspelled)):
             json_string += '"'+ str(misspelled[i][2][0]) + '": {\n'
@@ -102,9 +104,10 @@ def main(argv):
     json_path = ''
     ifile = ''
     console = True
+    correct_words = False
 
     # define command line arguments and check if the script call is valid
-    opts, args = getopt.getopt(argv,'p:l:j:i:h',['path=','lang=', 'json=', 'ifile=', 'help'])
+    opts, args = getopt.getopt(argv,'p:l:j:i:ch',['path=','lang=', 'json=', 'ifile=','correct', 'help'])
 
     for opt, arg in opts:
 	if opt in ('--path', '-p'):
@@ -122,6 +125,8 @@ def main(argv):
             if not (os.path.isfile(ifile)):
                 print 'Error. File', ifile, 'does not exist.'
                 sys.exit()
+        elif opt in ('--correct', '-c'):
+            correct_words = True
 	elif opt in ('--help', '-h') or opt not in ('--ifile', '-i'):
             print 'Usage:'
 	    print 'spell_check.py [--path=PATH] [--lang=LANG] [--json=OUT.json] --ifile=INPUTFILE'
@@ -144,7 +149,7 @@ def main(argv):
     f_in = open(ifile, 'r')
 
     # perform analysis on file and return json_data for writing to file
-    json_data = spcheck(f_in, lang, hun, console)
+    json_data = spcheck(f_in, lang, hun, console, correct_words)
     if console == False and json_data != '':
         json_out = open(json_path, 'w')
         json_out.write(json_data)
