@@ -115,7 +115,8 @@ def main(argv):
     correct_words = False
 
     # define command line arguments and check if the script call is valid
-    opts, args = getopt.getopt(argv, 'p:l:j:i:ch', ['path=', 'lang=', 'json=', 'ifile=', 'correct', 'help'])
+    opts, args = getopt.getopt(argv, 'p:l:j:i:ch', ['path=', 'lang=', 'json=',
+                               'ifile=', 'correct', 'help'])
 
     for opt, arg in opts:
         if opt in ('--path', '-p'):
@@ -144,16 +145,15 @@ def main(argv):
             print '               -i INPUTFILE'
             sys.exit()
 
-
     # check dictionaries exist
     hun_path = path + '/' + lang
     if not (os.path.isfile(hun_path + '.dic')):
         sys.stderr.write('Error. Could not find dictionary at '
-                          + hun_path + '.dic\n')
+                         + hun_path + '.dic\n')
         sys.exit()
     if not (os.path.isfile(hun_path + '.aff')):
         sys.stderr.write('Error. Count not find aff file at '
-                          + hun_path + '.aff\n')
+                         + hun_path + '.aff\n')
         sys.exit()
 
     # init hunspell
