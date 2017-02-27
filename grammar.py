@@ -17,18 +17,23 @@
 # OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 
-import sys, getopt, os
-import io, json
+import sys
+import getopt
+import os
+import io
+import json
 import re
 import language_check
 
-# grcheck(string to_check, string lang, language_check.LanguageTool ltool, bool console)
+
+# grcheck(string to_check, string lang, language_check.LanguageTool ltool,
+#         bool console)
 def grcheck(to_check, lang, ltool, console):
     json_string = ''
     matches = ltool.check(to_check)
     num_matches = len(matches)
 
-    if console == True:
+    if console is True:
         print 'lang: ', lang
         print 'matches: ', num_matches
         for i in range(num_matches):
@@ -46,55 +51,63 @@ def grcheck(to_check, lang, ltool, console):
     # LanguageTool.check.Match type is not JSON serializeable
     # build a JSON string from the array of Match objects
     else:
-        json_string += '{\n'
-        json_string += '"lang": ' + '"' + lang + '",\n'
-        json_string += '"num_matches": ' + str(num_matches) +',\n'
-        json_string += '"matches": {\n'
+        json_string += ('{ '
+                        + '"lang": ' + '"' + lang + '", '
+                        + '"num_matches": ' + str(num_matches) + ', '
+                        + '"matches": { ')
         for i in range(num_matches):
-            json_string += '"' + str(i) + '": {\n'
-            json_string += '"fromy": ' + str(matches[i].fromy) + ',\n'
-            json_string += '"fromx": ' + str(matches[i].fromx) + ',\n'
-            json_string += '"ruleId": ' + '"' + str(matches[i].ruleId) + '",\n'
-            json_string += '"msg": ' + '"' + str(matches[i].msg) + '",\n'
-            json_string += '"category": ' + '"' + str(matches[i].category) + '",\n'
-            json_string += '"issuetype": ' + '"' + str(matches[i].locqualityissuetype) + '",\n'
+            json_string += ('"' + str(i) + '": { '
+                            + '"fromy": ' + str(matches[i].fromy) + ', '
+                            + '"fromx": ' + str(matches[i].fromx) + ', '
+                            + '"ruleId": ' + '"' + str(matches[i].ruleId)
+                            + '", '
+                            + '"msg": ' + '"' + str(matches[i].msg) + '", '
+                            + '"category": ' + '"' + str(matches[i].category)
+                            + '", '
+                            + '"issuetype": ' + '"'
+                            + str(matches[i].locqualityissuetype) + '", ')
             j_array = json.dumps(matches[i].replacements)
-            json_string += '"replacements": ' + j_array + ',\n'
-            json_string += '"context": ' + '"' + str(matches[i].context) + '"\n'
-            json_string += '}'
-            if i != (num_matches -1):
+            json_string += ('"replacements": ' + j_array + ', '
+                            + '"context": ' + '"' + str(matches[i].context)
+                            + '"'
+                            + ' }')
+            if i != (num_matches - 1):
                 json_string += ','
-            json_string += '\n'
-        json_string += '}\n}\n'
+        json_string += ' } }'
 
         # make formatting prettier
         json_obj = json.loads(json_string)
         json_string = json.dumps(json_obj, indent=2, sort_keys=True)
+        json_string += '\n'
 
         return json_string
+
 
 # main program that takes arguments
 def main(argv):
     supported_langs = language_check.get_languages()
 
     # options
-    lang = 'en_CA' #default language
+    lang = 'en_CA'  # default language
     json_path = ''
     ifile = ''
     console = True
 
-    #define command line arguments and check if the script call is valid
-    opts, args = getopt.getopt(argv, 'l:j:i:h',['lang=', 'json=', 'ifile=', 'help'])
+    # define command line arguments and check if the script call is valid
+    opts, args = getopt.getopt(argv, 'l:j:i:h', ['lang=', 'json=', 'ifile=',
+                               'help'])
 
     for opt, arg in opts:
         if opt in ('--lang', '-l'):
             lang = arg
             if lang not in supported_langs:
-                print 'Error. Language', lang, 'not supported.'
-                print 'Available languages:'
+                sys.stderr.write('Error. Language ' + lang
+                                 + ' not supported.\n')
+                sys.stderr.write('Available languages:\n')
                 for i in range(len(supported_langs)):
-                    print supported_langs[i],
-                print
+                    sys.stderr.write(supported_langs[i])
+                    sys.stderr.write(' ')
+                sys.stderr.write('\n')
                 sys.exit()
         elif opt in ('--json', '-j'):
             json_path = arg
@@ -102,14 +115,16 @@ def main(argv):
         elif opt in ('--ifile', '-i'):
             ifile = arg
             if not (os.path.isfile(ifile)):
-                print 'Error. File', ifile, 'does not exist.'
+                sys.stderr.write('Error. File' + ifile + 'does not exist.')
                 sys.exit()
         elif opt in ('--help', '-h') or opt not in ('--ifile', '-i'):
             print 'Usage:'
-            print 'grammar.py [--lang=LANG] [--json=OUT.json] --ifile=INPUTFILE'
+            print 'grammar.py [--lang=LANG] [--json=OUT.json]',
+            print '--ifile=INPUTFILE'
+            print
             print 'grammar.py [-l LANG] [-j OUT.json] -i INPUTFILE'
             print
-            print 'Supported languages:'
+            print 'Supported languages on this system:'
             for i in range(len(supported_langs)):
                 print supported_langs[i],
             print
@@ -123,10 +138,10 @@ def main(argv):
 
     # perform analysis on file and return json_data for writing to file
     json_data = grcheck(text, lang, ltool, console)
-    if console == False and json_data != '':
+    if console is False and json_data != '':
         json_out = open(json_path, 'w')
         json_out.write(json_data)
-        json_out.close();
+        json_out.close()
 
     f_in.close()
 
