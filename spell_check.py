@@ -17,22 +17,26 @@
 # OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 
-import sys, getopt, os
-import io, json
+import sys
+import getopt
+import os
+import io
+import json
 import re
 import hunspell
 
+
 # spcheck(string to_check, string lang, hunspell.HunSpell hun, bool console)
 def spcheck(to_check, lang, hun, console, correct_flag):
-    misspelled = [] # each element is (line_num, word_num, (word, suggest[]))
-    correct_words = [] # each element is (line_num, word_num, word)
+    misspelled = []  # each element is (line_num, word_num, (word, suggest[]))
+    correct_words = []  # each element is (line_num, word_num, word)
     json_string = ''
 
     line_num = 0
     for line in to_check:
         word_num = 0
         line_num += 1
-        for word in line.split(): # tokenize by whitespace delimeters?
+        for word in line.split():  # tokenize by whitespace delimeters?
             word_num += 1
             # simple regex to ensure that punctuation at the end of a word is
             # not passed to hunspell i.e. prevents false alarms
@@ -46,76 +50,80 @@ def spcheck(to_check, lang, hun, console, correct_flag):
             else:
                 correct_words.append((line_num, word_num, word))
     # print data from lists to the console if in console mode
-    if console == True:
+    if console is True:
         print 'lang: ', lang
         # print correctly spelled words
-        if correct_flag == True:
+        if correct_flag is True:
             print 'correctly spelled words:'
             for i in range(len(correct_words)):
-                print 'at word:', correct_words[i][1], 'on line:', correct_words[i][0], '"' + correct_words[i][2] + '"'
+                print 'at word:', correct_words[i][1],
+                print 'on line:', correct_words[i][0],
+                print '"' + correct_words[i][2] + '"'
             print '\n'
         # print suggestions for misspelled words
         for i in range(len(misspelled)):
             print 'misspelled word:'
-            print 'at word:', misspelled[i][1], 'on line:', misspelled[i][0], '"' + misspelled[i][2][0] + '"'
+            print 'at word:', misspelled[i][1],
+            print 'on line:', misspelled[i][0],
+            print '"' + misspelled[i][2][0] + '"'
             print 'suggestions:',
             for j in range(len(misspelled[i][2][1])):
                 print misspelled[i][2][1][j],
             print '\n'
     # build a JSON string from list structures
     else:
-        json_string += '{\n'
-        json_string += '"lang": ' + '"' +  lang + '",\n'
-        if correct_flag == True:
-            json_string += '"correct words": {\n'
+        json_string += '{ '
+        json_string += '"lang": ' + '"' + lang + '", '
+        if correct_flag is True:
+            json_string += '"correct words": { '
             for i in range(len(correct_words)):
-                json_string += '"' + str(correct_words[i][2]) + '": {\n'
-                json_string += '"word_num": ' + str(correct_words[i][1]) + ',\n'
-                json_string += '"line_num": ' + str(correct_words[i][0]) + '\n'
-                json_string += '}'
+                json_string += '"' + str(correct_words[i][2]) + '": { '
+                json_string += '"word_num": ' + str(correct_words[i][1]) + ','
+                json_string += '"line_num": ' + str(correct_words[i][0])
+                json_string += ' }'
                 if i != (len(correct_words) - 1):
                     json_string += ','
-                json_string += '\n'
-            json_string += '},\n'
-        json_string += '"misspelled words": {\n'
+            json_string += ' }, '
+        json_string += '"misspelled words": { '
         for i in range(len(misspelled)):
-            json_string += '"'+ str(misspelled[i][2][0]) + '": {\n'
-            json_string += '"word_num": ' + str(misspelled[i][1]) + ',\n'
-            json_string += '"line_num": ' + str(misspelled[i][0]) + ',\n'
+            json_string += '"' + str(misspelled[i][2][0]) + '": { '
+            json_string += '"word_num": ' + str(misspelled[i][1]) + ', '
+            json_string += '"line_num": ' + str(misspelled[i][0]) + ', '
             j_array = json.dumps(misspelled[i][2][1])
-            json_string += '"suggestions": ' + j_array + '\n'
-            json_string += '}'
+            json_string += '"suggestions": ' + j_array
+            json_string += ' }'
             if i != (len(misspelled) - 1):
-                json_string +=','
-            json_string += '\n'
-        json_string += '}\n}\n'
+                json_string += ','
+        json_string += ' } }'
 
         # make formatting prettier
         json_obj = json.loads(json_string)
         json_string = json.dumps(json_obj, indent=2, sort_keys=True)
+        json_string += '\n'
 
     return json_string
+
 
 # main program that takes arguments
 def main(argv):
     # options
-    path = '/usr/share/hunspell/' # default hunspell install path
-    lang = 'en_CA' #default language
+    path = '/usr/share/hunspell/'  # default hunspell install path
+    lang = 'en_CA'  # default language
     json_path = ''
     ifile = ''
     console = True
     correct_words = False
 
     # define command line arguments and check if the script call is valid
-    opts, args = getopt.getopt(argv,'p:l:j:i:ch',['path=','lang=', 'json=', 'ifile=','correct', 'help'])
+    opts, args = getopt.getopt(argv, 'p:l:j:i:ch', ['path=', 'lang=', 'json=', 'ifile=', 'correct', 'help'])
 
     for opt, arg in opts:
-	if opt in ('--path', '-p'):
-	    path = arg
+        if opt in ('--path', '-p'):
+            path = arg
             if not os.path.isdir(path):
-                print 'Error. Path', path, 'does not exist.'
+                sys.stderr.write('Error. Path ' + path + ' does not exist.\n')
                 sys.exit()
-	elif opt in ('--lang', '-l'):
+        elif opt in ('--lang', '-l'):
             lang = arg
         elif opt in ('--json', '-j'):
             json_path = arg
@@ -123,37 +131,43 @@ def main(argv):
         elif opt in ('--ifile', '-i'):
             ifile = arg
             if not (os.path.isfile(ifile)):
-                print 'Error. File', ifile, 'does not exist.'
+                sys.stderr.wrtie('Error. File ' + ifile + ' does not exist.\n')
                 sys.exit()
         elif opt in ('--correct', '-c'):
             correct_words = True
-	elif opt in ('--help', '-h') or opt not in ('--ifile', '-i'):
+        elif opt in ('--help', '-h') or opt not in ('--ifile', '-i'):
             print 'Usage:'
-	    print 'spell_check.py [--path=PATH] [--lang=LANG] [--json=OUT.json] --ifile=INPUTFILE'
-            print 'spell_check.py [-p PATH] [-l LANG] [-j OUT.json] -i INPUTFILE'
-	    sys.exit()
+            print 'spell_check.py [--path=PATH] [--lang=LANG] [--correct]'
+            print '               [--json=OUT.json] --ifile=INPUTFILE'
+            print
+            print 'spell_check.py [-p PATH] [-l LANG] [-c] [-j OUT.json]'
+            print '               -i INPUTFILE'
+            sys.exit()
+
 
     # check dictionaries exist
-    hun_path=path+'/'+lang
-    if not (os.path.isfile(hun_path+'.dic')):
-        print 'Error. Could not find dictionary at', hun_path+r'.dic'
+    hun_path = path + '/' + lang
+    if not (os.path.isfile(hun_path + '.dic')):
+        sys.stderr.write('Error. Could not find dictionary at '
+                          + hun_path + '.dic\n')
         sys.exit()
-    if not (os.path.isfile(hun_path+'.aff')):
-        print 'Error. Count not find aff file at', hun_path+'.aff'
+    if not (os.path.isfile(hun_path + '.aff')):
+        sys.stderr.write('Error. Count not find aff file at '
+                          + hun_path + '.aff\n')
         sys.exit()
 
     # init hunspell
-    hun = hunspell.HunSpell(hun_path+'.dic', hun_path+'.aff')
+    hun = hunspell.HunSpell(hun_path + '.dic', hun_path + '.aff')
 
     # open infile for reading
     f_in = open(ifile, 'r')
 
     # perform analysis on file and return json_data for writing to file
     json_data = spcheck(f_in, lang, hun, console, correct_words)
-    if console == False and json_data != '':
+    if console is False and json_data != '':
         json_out = open(json_path, 'w')
         json_out.write(json_data)
-        json_out.close();
+        json_out.close()
 
     f_in.close()
 
