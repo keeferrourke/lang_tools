@@ -35,9 +35,10 @@ def grcheck(to_check, lang, ltool, console):
 
     if console is True:
         print 'lang: ', lang
-        print 'matches: ', num_matches
+        print 'possible errors: ', num_matches
         for i in range(num_matches):
-            print "On line:", matches[i].fromy, "at char:", matches[i].fromx,
+            print "On line:", matches[i].fromy + 1,
+            print "at char:", matches[i].fromx + 1,
             print "rule violated:", matches[i].ruleId
             print "Message:", matches[i].msg
             print "Problem category:", matches[i].category
@@ -57,8 +58,8 @@ def grcheck(to_check, lang, ltool, console):
                         + '"matches": { ')
         for i in range(num_matches):
             json_string += ('"' + str(i) + '": { '
-                            + '"fromy": ' + str(matches[i].fromy) + ', '
-                            + '"fromx": ' + str(matches[i].fromx) + ', '
+                            + '"line": ' + str(matches[i].fromy + 1) + ', '
+                            + '"char": ' + str(matches[i].fromx + 1) + ', '
                             + '"ruleId": ' + '"' + str(matches[i].ruleId)
                             + '", '
                             + '"msg": ' + '"' + str(matches[i].msg) + '", '
