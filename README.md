@@ -46,7 +46,9 @@ spell_check.py -l en_US -j corrections.json -i misspellings
 ```
 
 Note that if Hunspell is not installed at the default path
-`/usr/share/hunspell`, then you may specify the path with the `--path` option.
+`/usr/share/hunspell`, then you may specify the path with either the `-p` or
+the  `--path` option.
+
 For instance:
 ```
 spell_check.py --path=/opt/hunspell --ifile=misspellings
@@ -59,6 +61,7 @@ option.
 ```
 spell_check.py --correct --ifile=misspellings
 spell_check.py -c -i misspellings
+```
 
 For help:
 ```
@@ -71,13 +74,14 @@ Run check on a file called `bad_grammar` against Canadian English rules with
 output to the console. If the `--lang` option isn't specified, then the
 default language rules that are used belong to Canadian English.
 ```
-grammar.py --lang=en_CA -i bad_grammar
+grammar.py --lang=en_CA --ifile bad_grammar
+grammar.py -l -i bad_grammar
 ```
 
 Run check on a file called `bad_grammar` against US English rules, with output
 to `grammatical.json`.
 ```
-grammar.py --lang=en_US --json=grammatical.json -i bad_grammar
+grammar.py --lang=en_US --json=grammatical.json --ifile bad_grammar
 grammar.py -l en_US -j grammatical.json -i bad_grammar
 ```
 
