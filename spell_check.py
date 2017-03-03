@@ -37,6 +37,19 @@ def print_usage():
     print 'spell_check.py [-p PATH] [-l LANG] [-c] [-o OUT.json] [-q]'
     print '               -i INPUTFILE'
 
+    return
+
+
+# this function returns true if a string is a valid complex, real, or integer
+# number
+def isnumber(string):
+    try:
+        complex(string)  # try casting the string as a complex type
+    except ValueError:
+        return False
+
+    return True
+
 
 # spcheck(string to_check, string lang, hunspell.HunSpell hun)
 # returns two lists -- mispelled is a complicated structure that is handled in
@@ -64,9 +77,16 @@ def spcheck(to_check, lang, hun):
             res = regex.match(word)
             if res:
                 word = res.group(1)
+
             # note that hunspell will think that cat!dog is not a word, but
             # hyphenated words such as cat-dog may pass, even though they
             # aren't in the English lexicon
+
+            # ignore any "words" that are just punctuation or number sequences
+            if re.match(r'^[_\W]+$', word):  # if only punctuation
+                continue
+            elif isnumber(word):  # check if the word is just a number
+                continue
 
             char_num = line.find(word, char_num)
 
@@ -270,7 +290,7 @@ def main(argv):
     if with_correct is True:
         json_data = build_json(misspelled, infile, lang, correct_words)
     else:
-        json_data = build_json(misspelled, lang, infile)
+        json_data = build_json(misspelled, infile, lang)
 
     # print to console
     if not quiet:
