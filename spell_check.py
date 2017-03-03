@@ -62,13 +62,13 @@ def spcheck(to_check, lang, hun):
     gchar_num = 0  # character count from beginning of file
     line_num = 0
 
-    # optimized regex from Jamey
+    # optimized regex provided by Jamey
     regex = re.compile(r'[^a-zA-z]*([a-zA-Z]+([-\'][a-zA-Z]+)*)')
 
     for line in to_check:
         word_num = 0
         line_num += 1
-        char_num = 0 # character count on the current line
+        char_num = 0  # character count on the current line
 
         for word in line.split():  # tokenize by whitespace delimeters?
             word_num += 1
@@ -102,43 +102,42 @@ def spcheck(to_check, lang, hun):
     return misspelled, correct_words
 
 
-# build_json(list misspelled, string filename, list correct = [])
+# build_json(list misspelled, string filename, list correct=[])
 # note that the correct list is optional
-def build_json(misspelled, filename, lang, correct = []):
+def build_json(misspelled, filename, lang, correct=[]):
     filename = os.path.basename(filename)
     json_string = ''
 
     json_string += '{ '
-    json_string += '"lang": ' + '"' + lang + '", '
 
     # add correct words to the json string, if a list is provided
     # this may be useful in the event that someone wants to do an analysis on
     # most commonly correctly spelled words
+    json_string += '"feedback": [ '
     if correct:
-        json_string += '"correct": [ '
         for i in range(len(correct)):
             json_string += '{ '
             json_string += '"target": "' + str(correct[i][2]) + '", '
-            json_string += '"word_num": ' + str(correct[i][1]) + ','
-            json_string += '"line_num": ' + str(correct[i][0])
-            json_string += ' }'
-            if i != (len(correct) - 1):
-                json_string += ','
-        json_string += ' ], '
+            json_string += '"word_num": ' + str(correct[i][1]) + ', '
+            json_string += '"line_num": ' + str(correct[i][0]) + ', '
+            json_string += '"feedback": "Selected word is correct.", '
+            json_string += '"lang": ' + '"' + lang + '"'
+            json_string += ' },'
 
     # always add misspelled words to the json, along with other useful info
-    json_string += '"mispelled": [ '
     for i in range(len(misspelled)):
         json_string += '{ '
-        json_string += '"target": "' + str(misspelled[i][4][0]) +'", '
+        json_string += '"target": "' + str(misspelled[i][4][0]) + '", '
         json_string += '"wordNum": ' + str(misspelled[i][1]) + ', '
         json_string += '"lineNum": ' + str(misspelled[i][0]) + ', '
         json_string += '"linePos": ' + str(misspelled[i][2]) + ', '
         json_string += '"charPos": ' + str(misspelled[i][3]) + ', '
         json_string += '"type": "spelling", '
+        json_string += '"lang": ' + '"' + lang + '", '
         json_string += '"toolName": "hunspell", '
         json_string += '"filename": "' + str(filename) + '", '
-        json_string += '"feedback": "Selected word not found in dictionary", '
+        json_string += ('"feedback": "Selected word not found in ' + lang
+                        + 'dictionary", ')
         j_array = json.dumps(misspelled[i][4][1])
         json_string += '"suggestions": ' + j_array
         json_string += ' }'
@@ -148,19 +147,19 @@ def build_json(misspelled, filename, lang, correct = []):
 
     # make formatting prettier
     json_obj = json.loads(json_string)
-    json_string = json.dumps(json_obj, indent = 4, sort_keys = True)
+    json_string = json.dumps(json_obj, indent=4, sort_keys=True)
     json_string += '\n'
 
     return json_string
 
 
-# print_data(string json_data, bool english = False, list misspelled = [],
-#            list correct_words = [])
+# print_data(string json_data, bool english=False, list misspelled=[],
+#            list correct_words=[])
 # note that all arguments are optional, but if the english flag is true, then
 # the language and misspelled list must be provided. If no english flag is
 # provided, then json_data must be provided.
-def print_data(json_data = '', lang = '', english = False , misspelled = [],
-               correct_words = []):
+def print_data(json_data='', lang='', english=False, misspelled=[],
+               correct_words=[]):
     # print data from lists in english if specified
     if english is True:
         print 'lang: ', lang
@@ -213,8 +212,9 @@ def main(argv):
     # define command line arguments and check if the script call is valid
     try:
         opts, args = getopt.getopt(argv, 'p:l:o:i:cqh', ['path=', 'lang=',
-                                   'outfile=', 'infile=', 'correct', 'english',
-                                   'quiet', 'help'])
+                                                         'outfile=', 'infile=',
+                                                         'correct', 'english',
+                                                         'quiet', 'help'])
     except getopt.GetoptError as err:
         sys.stderr.write('Error. ' + str(err) + '\n')
         print_usage()
@@ -239,7 +239,8 @@ def main(argv):
         elif opt in ('--infile', '-i'):
             infile = arg
             if not (os.path.isfile(infile)):
-                sys.stderr.write('Error. File ' + infile + ' does not exist.\n')
+                sys.stderr.write('Error. File ' + infile
+                                 + ' does not exist.\n')
                 sys.exit(1)
         elif opt in ('--correct', '-c'):
             with_correct = True
