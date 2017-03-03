@@ -41,8 +41,8 @@ spell_check.py --lang=en_CA -i mispellings
 Run check on a file called `misspellings` against US English dictionaries, with
 output to `corrections.json`.
 ```
-spell_check.py --lang=en_US --json=corrections.json --ifile=mispellings
-spell_check.py -l en_US -j corrections.json -i misspellings
+spell_check.py --lang=en_US --outfile=corrections.json --infile=mispellings
+spell_check.py -l en_US -o corrections.json -i misspellings
 ```
 
 Note that if Hunspell is not installed at the default path
@@ -51,7 +51,7 @@ the  `--path` option.
 
 For instance:
 ```
-spell_check.py --path=/opt/hunspell --ifile=misspellings
+spell_check.py --path=/opt/hunspell --infile=misspellings
 spell_check.py -p /opt/hunspell -i misspellings
 ```
 
@@ -62,6 +62,11 @@ option.
 spell_check.py --correct --ifile=misspellings
 spell_check.py -c -i misspellings
 ```
+
+For alternative, simplified plain English output, pass the `--english` flag.
+
+To suppress output to console when an output file is specified, pass either
+`-q` or `--quiet`.
 
 For help:
 ```
