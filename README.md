@@ -32,7 +32,7 @@ $ sudo -H pip install --upgrade language-check
 ### spell\_check.py
 
 Run check on a file called `misspellings` against Canadian English dictionaries
-with output to the console. If the `--lang` or short `-l` option isn't
+with JSON output to the console. If the `--lang` or short `-l` option isn't
 specified, then the default language that is used is Canadian English.
 ```
 spell_check.py --lang=en_CA -i mispellings
@@ -76,23 +76,97 @@ spell_check.py --help
 ### grammar.py
 
 Run check on a file called `bad_grammar` against Canadian English rules with
-output to the console. If the `--lang` option isn't specified, then the
+JSON output to the console. If the `--lang` option isn't specified, then the
 default language rules that are used belong to Canadian English.
 ```
-grammar.py --lang=en_CA --ifile bad_grammar
-grammar.py -l -i bad_grammar
+grammar.py --lang=en_CA --infile bad_grammar
+grammar.py -l en_CA -i bad_grammar
 ```
 
 Run check on a file called `bad_grammar` against US English rules, with output
 to `grammatical.json`.
 ```
-grammar.py --lang=en_US --json=grammatical.json --ifile bad_grammar
-grammar.py -l en_US -j grammatical.json -i bad_grammar
+grammar.py --lang=en_US --outfile=grammatical.json --infile bad_grammar
+grammar.py -l en_US -o grammatical.json -i bad_grammar
 ```
+
+Include spell checking with the grammar check:
+```
+grammar.py --infile bad_grammar --with_spelling
+grammar.py -i --with_spelling
+```
+
+For alternative, simplified plain English output, pass the `--english` flag.
+
+To suppress output to console when an output file is specified, pass either
+`-q` or `--quiet`.
 
 For help:
 ```
 grammar.py --help
+```
+
+### Output
+These scripts will print JSON containing feedback objects, as specified in the
+[IFS Wiki](https://github.com/ian-james/IFS/wiki).
+
+Spell checking JSON output is as follows:
+
+```javascript
+{
+    "feedback" : [
+        {
+            "target": "received",
+            "wordNum": 40,
+            "lineNum": 2,
+            "linePos": 12,
+            "charPos": 89,
+            "type": "spelling",
+            "lang": "en_CA",
+            "toolName": "hunspell",
+            "filename": "infile.txt",
+            "feedback": "Selected word not found in en_CA dictionary",
+            "suggestions": [
+                "recieved",
+                "recieves"
+            ]
+        }
+    ]
+}
+
+```
+
+Grammar checking JSON output is as follows, where the `hl_begin` and `hl_end`
+attributes specify the (character on line, line) positions where the error
+begins, and the error ends.
+
+```javascript
+{
+    "feedback" : [
+        {
+            "target": "...context of the error...",
+            "hl_begin": [
+                20,
+                2
+            ],
+            "hl_end": [
+                12,
+                3
+            ],
+            "lang": "en_CA",
+            "type": "type of grammar rule that was violated",
+            "toolName": "Language Tool",
+            "filename": "infile.txt",
+            "feedback": "Language Tool feedback message",
+            "suggestions": [
+                "replacement suggestion 1",
+                "replacement suggestion 2",
+                "replacement suggestion 3"
+            ]
+        }
+    ]
+}
+
 ```
 
 ## Caveats
@@ -105,7 +179,7 @@ given language's lexicon. Ex. "cat-dog" is not an English word, but will pass.
 
 ### grammar.py
 
-Kind of slow?
+Kind of slow, maybe?
 
 ## License Information
 
