@@ -109,34 +109,33 @@ def build_json(misspelled, filename, lang, correct=[]):
     json_string = ''
 
     json_string += '{ '
-
+    json_string += '"feedback": [ '
     # add correct words to the json string, if a list is provided
     # this may be useful in the event that someone wants to do an analysis on
     # most commonly correctly spelled words
-    json_string += '"feedback": [ '
     if correct:
         for i in range(len(correct)):
-            json_string += '{ '
-            json_string += '"target": "' + str(correct[i][2]) + '", '
-            json_string += '"word_num": ' + str(correct[i][1]) + ', '
-            json_string += '"line_num": ' + str(correct[i][0]) + ', '
-            json_string += '"feedback": "Selected word is correct.", '
-            json_string += '"lang": ' + '"' + lang + '"'
-            json_string += ' },'
+            json_string += ('{ '
+                            + '"target": "' + str(correct[i][2]) + '", '
+                            + '"word_num": ' + str(correct[i][1]) + ', '
+                            + '"line_num": ' + str(correct[i][0]) + ', '
+                            + '"feedback": "Selected word is correct.", '
+                            + '"lang": ' + '"' + lang + '"'
+                            + ' },')
 
     # always add misspelled words to the json, along with other useful info
     for i in range(len(misspelled)):
-        json_string += '{ '
-        json_string += '"target": "' + str(misspelled[i][4][0]) + '", '
-        json_string += '"wordNum": ' + str(misspelled[i][1]) + ', '
-        json_string += '"lineNum": ' + str(misspelled[i][0]) + ', '
-        json_string += '"linePos": ' + str(misspelled[i][2]) + ', '
-        json_string += '"charPos": ' + str(misspelled[i][3]) + ', '
-        json_string += '"type": "spelling", '
-        json_string += '"lang": ' + '"' + lang + '", '
-        json_string += '"toolName": "hunspell", '
-        json_string += '"filename": "' + str(filename) + '", '
-        json_string += ('"feedback": "Selected word not found in ' + lang
+        json_string += ('{ '
+                        + '"target": "' + str(misspelled[i][4][0]) + '", '
+                        + '"wordNum": ' + str(misspelled[i][1]) + ', '
+                        + '"lineNum": ' + str(misspelled[i][0]) + ', '
+                        + '"linePos": ' + str(misspelled[i][2]) + ', '
+                        + '"charPos": ' + str(misspelled[i][3]) + ', '
+                        + '"type": "spelling", '
+                        + '"lang": ' + '"' + lang + '", '
+                        + '"toolName": "hunspell", '
+                        + '"filename": "' + str(filename) + '", '
+                        + '"feedback": "Selected word not found in ' + lang
                         + 'dictionary", ')
         j_array = json.dumps(misspelled[i][4][1])
         json_string += '"suggestions": ' + j_array
@@ -153,8 +152,8 @@ def build_json(misspelled, filename, lang, correct=[]):
     return json_string
 
 
-# print_data(string json_data, bool english=False, list misspelled=[],
-#            list correct_words=[])
+# print_data(string json_data, string lang, bool english=False,
+#             list misspelled=[], list correct_words=[])
 # note that all arguments are optional, but if the english flag is true, then
 # the language and misspelled list must be provided. If no english flag is
 # provided, then json_data must be provided.
@@ -244,7 +243,7 @@ def main(argv):
                 sys.exit(1)
         elif opt in ('--correct', '-c'):
             with_correct = True
-        elif opt == "--english":
+        elif opt == '--english':
             english = True
         elif opt in ('--quiet', '-q'):
             quiet = True
@@ -263,7 +262,7 @@ def main(argv):
     if not json_path and quiet:
         sys.stderr.write('Error. The quiet option cannot be used without '
                          + 'specifying an output file.\n')
-        sys.exit(1)
+        sys.exit(2)
     elif english and quiet:
         sys.stderr.write('Warning: Suppressing specified plain English '
                          + 'output. Did you mean to do this?\n')
