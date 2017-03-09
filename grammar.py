@@ -31,7 +31,7 @@ import language_check
 # supported languages as an argument
 def print_usage(supported_langs = []):
     print 'Usage:'
-    print 'grammar.py [--lang=LANG] [--outfile=OUT.json] [--with-spelling]',
+    print 'grammar.py [--lang=LANG] [--outfile=OUT.json] [--with-spelling]'
     print '           [--english] [--quiet] --infile=INPUTFILE'
     print
     print 'grammar.py [-l LANG] [-j OUT.json] [-seq] -i INPUTFILE'
@@ -40,7 +40,9 @@ def print_usage(supported_langs = []):
         supported_langs = list(supported_langs)  # sets are not iterable?
         print 'Supported languages on this system:'
         for i in range(len(supported_langs)):
-            print supported_langs[i] + ",",
+            print supported_langs[i],
+            if i != len(supported_langs) - 1:
+                print ",",
         print
 
 # grcheck(string to_check, language_check.LanguageTool ltool,
@@ -79,6 +81,7 @@ def build_json(filename, lang, matches):
         json_string += ('"hl_begin": ' + hl_begin + ', '
                         + '"hl_end": ' + hl_end + ', '
                         + '"lang": ' + '"' + lang + '", '
+                        + '"type": ' + matches[i].locqualityissuetype + '", '
                         + '"toolName": "Language Tool", '
                         + '"filename": "' + filename + '", '
                         + '"feedback": ' + '"' + str(matches[i].msg) + '", ')
