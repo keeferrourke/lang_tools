@@ -117,8 +117,8 @@ def build_json(misspelled, filename, lang, correct=[]):
         for i in range(len(correct)):
             json_string += ('{ '
                             + '"target": "' + str(correct[i][2]) + '", '
-                            + '"word_num": ' + str(correct[i][1]) + ', '
-                            + '"line_num": ' + str(correct[i][0]) + ', '
+                            + '"wordNum": ' + str(correct[i][1]) + ', '
+                            + '"lineNum": ' + str(correct[i][0]) + ', '
                             + '"feedback": "Selected word is correct.", '
                             + '"lang": ' + '"' + lang + '"'
                             + ' },')
@@ -134,7 +134,7 @@ def build_json(misspelled, filename, lang, correct=[]):
                         + '"type": "spelling", '
                         + '"lang": ' + '"' + lang + '", '
                         + '"toolName": "hunspell", '
-                        + '"filename": "' + str(filename) + '", '
+                        + '"filename": "' + filename + '", '
                         + '"feedback": "Selected word not found in ' + lang
                         + 'dictionary", ')
         j_array = json.dumps(misspelled[i][4][1])
