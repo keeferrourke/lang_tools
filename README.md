@@ -12,7 +12,7 @@ part of the core tools.
 #### Python Hunspell
 The spell check script makes use of Hunspell dictionaries and correction.
 ```
-$ sudo apt install hunspell
+$ sudo apt install hunspell libhunspell-dev
 ```
 
 You also need the python wrapper:
