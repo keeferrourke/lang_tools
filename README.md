@@ -8,7 +8,7 @@ These scripts have been merged into the
 [_Immediate Feeback System_](https://github.com/ian-james/IFS) as part of the
 core tools.
 
-![IFS integration](https://krourke.org/lang_tools.png)
+![IFS integration](https://krourke.org/img/lang_tools.png)
 
 ## Notes
 There are now two versions of each utility, one for python2 environments, and
