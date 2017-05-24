@@ -4,25 +4,34 @@ This set of scripts will parse text and provide suggestions for spelling
 and grammatical corrections. The scripts may be used on the command line with
 verbose console output, or to produce JSON formatted output.
 
-These scripts are intended to be merged into the _Immediate Feeback System_ as
-part of the core tools.
+These scripts have been merged into the
+[_Immediate Feeback System_](https://github.com/ian-james/IFS) as part of the
+core tools.
+
+![IFS integration](https://krourke.org/lang_tools.png)
+
+## Notes
+There are now two versions of each utility, one for python2 environments, and
+one for python3 environments. They accomplish the exact same task, in the
+exact same fashion. A python3 rewrite was required for compatibility with
+IFS however.
 
 ## Prequisites
 
 #### Python Hunspell
 The spell check script makes use of Hunspell dictionaries and correction.
-```
+```sh
 $ sudo apt install hunspell libhunspell-dev
 ```
 
 You also need the python wrapper:
-```
+```sh
 $ sudo -H pip install hunspell
 ```
 
 #### Language Tool
 Install LanguageTool and its python wrapper by:
-```
+```sh
 $ sudo -H pip install --upgrade 3to2
 $ sudo -H pip install --upgrade language-check
 ```
@@ -31,16 +40,17 @@ $ sudo -H pip install --upgrade language-check
 
 ### spell\_check.py
 
-Run check on a file called `misspellings` against Canadian English dictionaries
-with JSON output to the console. If the `--lang` or short `-l` option isn't
-specified, then the default language that is used is Canadian English.
-```
+Run check on a file called `misspellings` against Canadian English
+dictionaries with JSON output to the console. If the `--lang` or short `-l`
+option isn't specified, then the default language that is used is Canadian
+English.
+```sh
 spell_check.py --lang=en_CA -i mispellings
 ```
 
-Run check on a file called `misspellings` against US English dictionaries, with
-output to `corrections.json`.
-```
+Run check on a file called `misspellings` against US English dictionaries,
+with output to `corrections.json`.
+```sh
 spell_check.py --lang=en_US --outfile=corrections.json --infile=mispellings
 spell_check.py -l en_US -o corrections.json -i misspellings
 ```
@@ -50,7 +60,7 @@ Note that if Hunspell is not installed at the default path
 the  `--path` option.
 
 For instance:
-```
+```sh
 spell_check.py --path=/opt/hunspell --infile=misspellings
 spell_check.py -p /opt/hunspell -i misspellings
 ```
@@ -58,7 +68,7 @@ spell_check.py -p /opt/hunspell -i misspellings
 By default the list of correctly spelled words is suppressed from the output,
 however this can be revealed by specifying either the `-c` or `--correct`
 option.
-```
+```sh
 spell_check.py --correct --ifile=misspellings
 spell_check.py -c -i misspellings
 ```
@@ -69,7 +79,7 @@ To suppress output to console when an output file is specified, pass either
 `-q` or `--quiet`.
 
 For help:
-```
+```sh
 spell_check.py --help
 ```
 
@@ -78,20 +88,20 @@ spell_check.py --help
 Run check on a file called `bad_grammar` against Canadian English rules with
 JSON output to the console. If the `--lang` option isn't specified, then the
 default language rules that are used belong to Canadian English.
-```
+```sh
 grammar.py --lang=en_CA --infile bad_grammar
 grammar.py -l en_CA -i bad_grammar
 ```
 
 Run check on a file called `bad_grammar` against US English rules, with output
 to `grammatical.json`.
-```
+```sh
 grammar.py --lang=en_US --outfile=grammatical.json --infile bad_grammar
 grammar.py -l en_US -o grammatical.json -i bad_grammar
 ```
 
 Include spell checking with the grammar check:
-```
+```sh
 grammar.py --infile bad_grammar --with_spelling
 grammar.py -i --with_spelling
 ```
@@ -102,7 +112,7 @@ To suppress output to console when an output file is specified, pass either
 `-q` or `--quiet`.
 
 For help:
-```
+```sh
 grammar.py --help
 ```
 
