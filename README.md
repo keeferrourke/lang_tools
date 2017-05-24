@@ -5,7 +5,7 @@ and grammatical corrections. The scripts may be used on the command line with
 verbose console output, or to produce JSON formatted output.
 
 These scripts have been merged into the
-[_Immediate Feeback System_](https://github.com/ian-james/IFS) as part of the
+[_Immediate Feedback System_](https://github.com/ian-james/IFS) as part of the
 core tools.
 
 ![IFS integration](https://krourke.org/img/lang_tools.png)
